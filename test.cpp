@@ -188,8 +188,96 @@ int attribute()
 	return 0;
 }
 
+WINDOW *create_newwin(int heigth, int width, int starty, int startx)
+{
+	WINDOW *mywin;
+	/*建立窗口，内存分配等
+	 * heigth 高
+	 * width  宽
+	 * starty 起始列
+	 * startx 起始行
+	 * */
+
+	mywin = newwin(heigth, width, starty, startx);
+	/*画边框*/
+	//box(mywin, 0, 0);
+	wborder(mywin, '|','|','-','-','x','x','x','x');
+	/*显示*/
+	wrefresh(mywin);
+	return mywin;
+}
+
+int destroy_win(WINDOW *mywin)
+{
+	//box(mywin, '', '');
+	wborder(mywin, ' ',' ',' ',' ',' ',' ',' ',' ');
+	/* 1 当前操作的窗口
+	 * 2 左边界字符
+	 * 3 右边界字符
+	 * 4 上边界字符
+	 * 5 下边界字符
+	 * 6 左上角字符
+	 * 7 右上角字符
+	 * 8 左下角字符
+	 * 9 右下角字符
+	 * */
+	wrefresh(mywin);
+	delwin(mywin);
+
+	return 0;
+}
+
+int opera_win(WINDOW *mywin, int heigth, int width, int starty, int startx)
+{
+	int ch;
+	while((ch = getch()) != 'q')
+	{
+		switch(ch)
+		{
+			case KEY_LEFT:
+				destroy_win(mywin);
+				mywin = create_newwin(heigth, width, starty, --startx);
+				break;
+			case KEY_RIGHT:
+				destroy_win(mywin);
+				mywin = create_newwin(heigth, width, starty, ++startx);
+				break;
+			case KEY_UP:
+				destroy_win(mywin);
+				mywin = create_newwin(heigth, width, --starty, startx);
+				break;
+			case KEY_DOWN:
+				destroy_win(mywin);
+				mywin = create_newwin(heigth, width, ++starty, startx);
+				break;
+		}
+	}
+
+	return 0;
+}
+
+/*窗口*/
 int win()
 {
+	WINDOW *mywin;
+	int startx, starty, width, heigth;
+	int ch;
+
+	heigth = 20;
+	width = 40;
+
+	/*COLS行数 LINES列数*/
+	startx = (COLS - width)/ 2;
+	starty = (LINES - heigth)/ 2;
+	//startx = 0;
+	//starty = 0;
+
+	printw("press q to exit");
+
+	refresh();
+
+	mywin = create_newwin(heigth, width, starty, startx);
+	opera_win(mywin, heigth, width, starty, startx);
 
 	return 0;
 }
@@ -199,7 +287,8 @@ int main()
 	init();
  	//output();
 	//input();
-	attribute();
+	//attribute();
+	win();
 	end();
 	return 0;
 }
