@@ -256,6 +256,18 @@ int opera_win(WINDOW *mywin, int heigth, int width, int starty, int startx)
 	return 0;
 }
 
+int create_box(int heigth, int width, int starty, int startx)
+{
+	/* mvhline(y, x, ch, n) 指定位置划n个ch行线
+	 * mvvline(y, x, ch, n) 指定位置划n个ch列线
+	 * */
+
+	/*未使用win窗口,以后完善*/
+
+	return 0;
+}
+
+
 /*窗口*/
 int win()
 {
@@ -282,13 +294,37 @@ int win()
 	return 0;
 }
 
+int color()
+{
+	/*检测是否支持彩色显示*/
+	if (has_colors() == FALSE)
+	{
+		printf("no support color");
+		return 0;
+	}
+
+	/*启动彩色机制*/
+	start_color();
+	/*设置彩色，参数, 前景色，背景色*/
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+
+	attron(COLOR_PAIR(1));
+	char str[16] = {0};
+	getstr(str);
+	addstr(str);
+	attroff(COLOR_PAIR(1));
+
+	return 0;
+}
+
 int main()
 {
 	init();
  	//output();
 	//input();
 	//attribute();
-	win();
+	//win();
+ 	color();
 	end();
 	return 0;
 }
