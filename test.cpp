@@ -166,9 +166,25 @@ int attribute()
 	attroff(A_BOLD | A_UNDERLINE);
 
 	/*设置整个窗口属性*/
-	attrset(A_UNDERLINE);
+	//attrset(A_UNDERLINE);
 	addstr(str);
 	addch('\n');
+
+	/* attr_get 获取属性
+	 * chgat()  用来修改已输出字符的修饰
+	 * wchgat()
+	 * mvchgat()
+	 * */
+	mvchgat(0, 0, -1, A_BLINK, 1, NULL);
+	mvchgat(4, 0, -1, A_BLINK, 3, NULL);
+		/* 1 指定行
+		 * 2 指定列
+		 * 3 修改字符个数, -1表示整行
+		 * 4 属性
+		 * 5 颜色索引
+		 * 6 NULL
+		 * */
+
 	return 0;
 }
 
