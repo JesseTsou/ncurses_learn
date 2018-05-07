@@ -49,6 +49,7 @@ int init()
 	raw();
 	keypad(stdscr,TRUE);
 	noecho();
+	cbreak();
 	
 	return 0;
 }
@@ -273,7 +274,6 @@ int win()
 {
 	WINDOW *mywin;
 	int startx, starty, width, heigth;
-	int ch;
 
 	heigth = 20;
 	width = 40;
@@ -294,6 +294,109 @@ int win()
 	return 0;
 }
 
+int print_menu(WINDOW *mywin, int highlight, int size, char **choices)
+{
+	int x, y, i;
+	x = 2;
+	y = 2;
+	box(mywin, 0, 0);
+
+	for (i = 0; i < size; i ++)
+	{
+		if (highlight == i + 1)
+		{
+			wattron(mywin, A_REVERSE);
+			mvwprintw(mywin, y, x, "%s", choices[i]);
+			wattroff(mywin, A_REVERSE);
+		}
+		else
+		{
+			mvwprintw(mywin, y, x, "%s", choices[i]);
+		}
+		y++;
+	}
+
+	wrefresh(mywin);
+
+	return 0;
+}
+
+int key_ctl(WINDOW *mywin, int highlight, int size, char **choices)
+{
+	int choice = 0;
+	while(1)
+	{
+		int c = wgetch(mywin);
+		switch(c)
+		{
+			case KEY_UP:
+				if (highlight == 1)
+				{
+					highlight = size;
+				}
+				else
+				{
+					--highlight;
+				}
+				break;
+			case KEY_DOWN:
+				if (highlight == size)
+				{
+					highlight = 1;
+				}
+				else
+				{
+					++highlight;
+				}
+				break;
+			case 10:
+				choice = highlight;
+				break;
+			default:
+				mvprintw(LINES - 1, 0 ,"charcter press is %3d Hopefully it can be print as %c", c, c);
+				refresh();
+				break;
+		}
+		print_menu(mywin, highlight, size, choices);
+
+		if (choice != 0)
+		{
+			break;
+		}
+	}
+	mvprintw(LINES - 1, 0, "You chose choice %d highlight %d with choice string %s\n", choice, highlight, choices[choice - 1]);
+	clrtoeol();
+
+	return 0;
+}
+
+int key_pad()
+{
+	WINDOW *mywin;
+	int startx, starty, width, heigth;
+	int highlight = 1;
+	int choice = 0;
+	char *choices[] = {"1", "2", "3", "4", "exit"};
+	int size = sizeof(choices)/ sizeof(char*);
+
+	heigth = 20;
+	width = 40;
+
+	/*COLS行数 LINES列数*/
+	startx = (COLS - width)/ 2;
+	starty = (LINES - heigth)/ 2;
+
+	mywin = newwin(heigth, width, starty, startx);
+	keypad(mywin,TRUE);
+	mvprintw(0,0,"press enter to select a choice");
+	refresh();
+	print_menu(mywin, highlight, size, choices);
+	key_ctl(mywin, highlight, size, choices);
+
+	return 0;
+}
+
+/*色彩模式*/
 int color()
 {
 	/*检测是否支持彩色显示*/
@@ -324,7 +427,8 @@ int main()
 	//input();
 	//attribute();
 	//win();
- 	color();
+ 	//color();
+	key_pad();
 	end();
 	return 0;
 }
