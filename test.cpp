@@ -396,6 +396,96 @@ int key_pad()
 	return 0;
 }
 
+int report_choice(int x, int y , int *n_choices,char **choices,  int size)
+{
+	int i,j,choice;
+
+	int heigth = 20;
+	int width = 40;
+
+	/*COLS行数 LINES列数*/
+	int startx = (COLS - width)/ 2;
+	int starty = (LINES - heigth)/ 2;
+
+	i = startx + 2;
+	j = starty + 3;
+
+	for (choice = 0; choice < size; ++choice)
+	{
+		if (y == j + choice && x >= i && x <= i + strlen(choices[choice]))
+		{
+			if (choice == size - 1)
+			{
+				*n_choices = -1;
+			}
+			else
+			{
+				*n_choices = choice + 1;
+			}
+			break;
+		}
+	}
+
+	return 0;
+}
+
+int mouse_ctl(WINDOW *mywin, int highlight, int size, char **choices)
+{
+	MEVENT event;
+	mousemask(ALL_MOUSE_EVENTS, NULL);
+	int choice = 0;
+	while(1)
+	{
+		int c = wgetch(mywin);
+		switch(c)
+		{
+			case KEY_MOUSE:
+				if (getmouse(&event) == OK)
+				{
+					if (event.bstate & BUTTON1_PRESSED)
+					{
+						report_choice(event.x + 1, event.y + 1, &choice, choices, size);
+						if (choice == -1)
+						{
+							return 0;
+						}
+						mvprintw(LINES - 1, 1, "choice made is : %d string chosen is %10s", choice, choices[choice - 1]);
+						refresh();
+					}
+				}
+				print_menu(mywin, highlight, size, choices);
+				break;
+		}
+	}
+
+	return 0;
+}
+int mouse_pad()
+{
+	WINDOW *mywin;
+	int startx, starty, width, heigth;
+	int highlight = 1;
+	int choice = 0;
+	char *choices[] = {"1", "2", "3", "4", "exit"};
+	int size = sizeof(choices)/ sizeof(char*);
+
+	heigth = 20;
+	width = 40;
+
+	/*COLS行数 LINES列数*/
+	startx = (COLS - width)/ 2;
+	starty = (LINES - heigth)/ 2;
+
+	mywin = newwin(heigth, width, starty, startx);
+	attron(A_REVERSE);
+	mvprintw(LINES - 1,1,"click to exit quit");
+	attroff(A_REVERSE);
+	refresh();
+	print_menu(mywin, highlight, size, choices);
+	mouse_ctl(mywin, highlight, size, choices);
+	return 0;
+}
+
 /*色彩模式*/
 int color()
 {
@@ -428,7 +518,8 @@ int main()
 	//attribute();
 	//win();
  	//color();
-	key_pad();
+	//key_pad();
+	mouse_pad();
 	end();
 	return 0;
 }
