@@ -1,5 +1,5 @@
 all:test
 test:
-	g++ test.cpp -o test -lncurses
+	g++ -g test.cpp -o test -lncurses
 clean:
 	rm -rf test
