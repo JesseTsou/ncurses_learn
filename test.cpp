@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <ncurses.h>
+#include <panel.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -531,6 +532,46 @@ int temp_leave()
 	return 0;
 }
 
+int ACS_char()
+{
+	printw("upper left corner");addch(ACS_ULCORNER);printw("\n");
+
+	return 0;
+}
+
+/*面板*/
+int panel_show()
+{
+	WINDOW *mywin[3];
+	PANEL *mypanel[3];
+	int lines = 10, cols = 40, y = 2, x = 4, i;
+
+	mywin[0] = newwin(lines, cols, y, x);
+	mywin[1] = newwin(lines, cols, y + 1, x + 5);
+	mywin[2] = newwin(lines, cols, y + 2, x + 10);
+
+	for (i = 0; i < 3; i ++)
+	{
+		box(mywin[i], 0, 0);
+	}
+
+	/*面板关联窗口*/
+	/*面板0压进栈*/
+	mypanel[0] = new_panel(mywin[0]);
+	/*面板1压进栈*/
+	mypanel[1] = new_panel(mywin[1]);
+	/*面板2压进栈*/
+	mypanel[2] = new_panel(mywin[2]);
+
+	/*面板2位于栈顶*/
+	update_panels();
+
+	/*显示*/
+	doupdate();
+
+	return 0;
+}
+
 int main()
 {
 	init();
@@ -541,7 +582,9 @@ int main()
  	//color();
 	//key_pad();
 	//mouse_pad();
-	temp_leave();
+	//temp_leave();
+	//ACS_char();
+	panel_show();
 	end();
 	return 0;
 }
