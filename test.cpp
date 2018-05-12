@@ -572,6 +572,62 @@ int panel_show()
 	return 0;
 }
 
+/*面板切换*/
+int panel_tab()
+{
+	WINDOW *mywin[3];
+	PANEL *mypanel[3];
+	int lines = 10, cols = 40, y = 2, x = 4, i;
+
+	mywin[0] = newwin(lines, cols, y, x);
+	mywin[1] = newwin(lines, cols, y + 1, x + 5);
+	mywin[2] = newwin(lines, cols, y + 2, x + 10);
+
+	for (i = 0; i < 3; i ++)
+	{
+		box(mywin[i], 0, 0);
+	}
+
+	/*面板关联窗口*/
+	/*面板0压进栈*/
+	mypanel[0] = new_panel(mywin[0]);
+	/*面板1压进栈*/
+	mypanel[1] = new_panel(mywin[1]);
+	/*面板2压进栈*/
+	mypanel[2] = new_panel(mywin[2]);
+
+
+	/*建立用户指针, 此处存储下一个面板*/
+	set_panel_userptr(mypanel[0], mypanel[1]);
+	set_panel_userptr(mypanel[1], mypanel[2]);
+	set_panel_userptr(mypanel[2], mypanel[0]);
+
+	/*面板2位于栈顶*/
+	update_panels();
+
+	/*显示*/
+	doupdate();
+
+	int ch;
+	PANEL *top = mypanel[2];
+
+	while((ch = getch()) != 'q')
+	{
+		switch(ch)
+		{
+			case 'c':
+				top = (PANEL *) panel_userptr(top);
+				/*设为栈顶*/
+				top_panel(top);
+				break;
+		}
+		update_panels();
+		doupdate();
+	}
+
+	return 0;
+}
+
 int main()
 {
 	init();
@@ -584,7 +640,8 @@ int main()
 	//mouse_pad();
 	//temp_leave();
 	//ACS_char();
-	panel_show();
+	//panel_show();
+	panel_tab();
 	end();
 	return 0;
 }
