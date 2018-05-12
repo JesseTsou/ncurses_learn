@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 int hello()
 {
@@ -510,6 +512,25 @@ int color()
 	return 0;
 }
 
+/*临时离开*/
+int temp_leave()
+{
+	printw("i will leave");
+	refresh();
+	sleep(2);
+	/*存储当前tty模式*/
+	def_prog_mode();
+	/*临时退出*/
+	endwin();
+	system("/bin/sh");
+	/*返回存储的tty模式*/
+	reset_prog_mode();
+	refresh();
+	printw("i am back");
+	refresh();
+	return 0;
+}
+
 int main()
 {
 	init();
@@ -519,7 +540,8 @@ int main()
 	//win();
  	//color();
 	//key_pad();
-	mouse_pad();
+	//mouse_pad();
+	temp_leave();
 	end();
 	return 0;
 }
