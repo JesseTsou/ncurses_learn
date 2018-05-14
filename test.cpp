@@ -124,6 +124,38 @@ int input()
 	return 0;
 }
 
+int input_timeout()
+{
+	char str[16] = {0};
+	timeout(1000);//getstr delay for 1s
+	if (getstr(str) == ERR)
+	{
+		addstr("get error");
+	}
+	else
+	{
+		addstr(str);
+	}
+
+	return 0;
+}
+int input_test_timeout()
+{
+	char str[16] = {0};
+	timeout(-1);//getstr delay
+	timeout(0);//getstr no delay
+	if (getstr(str) == ERR)
+	{
+		addstr("get error");
+	}
+	else
+	{
+		addstr(str);
+	}
+
+	return 0;
+}
+
 /*文字修饰*/
 int attribute()
 {
@@ -641,7 +673,9 @@ int main()
 	//temp_leave();
 	//ACS_char();
 	//panel_show();
-	panel_tab();
+	//panel_tab();
+	input_timeout();
+	input_test_timeout();
 	end();
 	return 0;
 }
