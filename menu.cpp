@@ -27,7 +27,6 @@ int end()
 	return 0;
 }
 
-/*我是分隔线*/
 int main()
 {
 	init();

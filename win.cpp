@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <ctype.h>
 
 int hello()
 {
@@ -571,6 +572,43 @@ int ACS_char()
 	return 0;
 }
 
+int test_scrollok()
+{
+	int lines, cols, ch;
+	WINDOW *win;
+
+	getmaxyx(stdscr, lines, cols);
+
+	win = newwin(lines, cols, 0, 0);
+
+	box(win, 0, 0);
+
+	wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+
+	wrefresh(win);
+
+	scrollok(win, TRUE);
+	wsetscrreg(win, 1, lines);
+
+	mvwprintw(win, 0, 16, "press ctr-c or 'Q' to exit\n");
+	
+	wrefresh(win);
+
+	for (int i = 0; i < 50; i ++)
+	{
+		usleep(20000);
+		wprintw(win, "test %d\n", i);
+	    wrefresh(win);
+	}
+
+	while(toupper(ch = wgetch(win)) != '\n')
+	{
+		
+	}
+
+	return 0;
+}
+
 /*我是分隔线*/
 int main()
 {
@@ -585,7 +623,8 @@ int main()
 	//temp_leave();
 	//ACS_char();
 	//input_timeout();
-	input_test_timeout();
+	//input_test_timeout();
+	test_scrollok();
 	end();
 	return 0;
 }
